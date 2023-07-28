@@ -1,5 +1,5 @@
-using Habitica;
-using Habitica.Response.Tasks;
+using Ar6yZuK.Habitica;
+using Ar6yZuK.Habitica.Response.Tasks;
 using Microsoft.Extensions.Configuration;
 
 namespace TestProject;

@@ -2,7 +2,7 @@
 using System.Text.Json.Serialization;
 #pragma warning disable CS8618
 
-namespace Habitica.Response.Tasks;
+namespace Ar6yZuK.Habitica.Response.Tasks;
 
 public class GetAllTasks
 {

@@ -1,6 +1,6 @@
-﻿using Habitica.Response;
+﻿using Ar6yZuK.Habitica.Response;
 
-namespace Habitica;
+namespace Ar6yZuK.Habitica;
 
 public class NotSuccessException : Exception
 {

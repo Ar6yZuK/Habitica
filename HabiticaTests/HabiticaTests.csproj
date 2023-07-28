@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Habitica\Habitica\Habitica.csproj" />
+    <ProjectReference Include="..\Habitica\Ar6yZuK.Habitica.csproj" />
   </ItemGroup>
 	
 </Project>

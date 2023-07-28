@@ -1,9 +1,9 @@
-﻿using Habitica.Response;
-using Habitica.Response.Tasks;
-using Habitica.Response.User;
+﻿using Ar6yZuK.Habitica.Response;
+using Ar6yZuK.Habitica.Response.Tasks;
+using Ar6yZuK.Habitica.Response.User;
 using System.Text.Json;
 
-namespace Habitica;
+namespace Ar6yZuK.Habitica;
 
 public class HabiticaClient : IDisposable
 {

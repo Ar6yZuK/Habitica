@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 #pragma warning disable CS8618
 
-namespace Habitica.Response;
+namespace Ar6yZuK.Habitica.Response;
 public class NotSuccess
 {
 	public class Root
