@@ -20,7 +20,7 @@ public class HabiticaClient : IDisposable
 
 	private readonly HttpClient _httpClient;
 
-	public HabiticaClient(Credentials credentials)
+	public HabiticaClient(ICredentials credentials)
 	{
 		if (credentials is null) throw new ArgumentNullException(nameof(credentials));
 

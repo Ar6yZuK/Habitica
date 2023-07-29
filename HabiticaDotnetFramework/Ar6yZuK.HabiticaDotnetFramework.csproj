@@ -47,7 +47,7 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="HabiticaClient.cs" />
-    <Compile Include="Credentials.cs" />
+    <Compile Include="ICredentials.cs" />
     <Compile Include="NotSuccessException.cs" />
     <Compile Include="Response\NotSuccess.cs" />
     <Compile Include="Response\User\BuyHealthPotion.cs" />
