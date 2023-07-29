@@ -5,10 +5,10 @@ namespace Ar6yZuK.Habitica;
 
 public class NotSuccessException : Exception
 {
-	public NotSuccess.Root NotSuccessObject { get; }
+	public NotSuccess.Root NotSuccessResponse { get; }
 
-	public NotSuccessException(NotSuccess.Root notSuccessObject)
+	public NotSuccessException(NotSuccess.Root notSuccessResponse)
 	{
-		NotSuccessObject = notSuccessObject;
+		NotSuccessResponse = notSuccessResponse;
 	}
 }
