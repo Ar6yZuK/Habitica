@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
+#pragma warning disable 1591
 
 namespace Ar6yZuK.Habitica.Response.Tasks;
 public class TaskScore

@@ -4,6 +4,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
+#pragma warning disable 1591
 
 namespace Ar6yZuK.Habitica.Response.Tasks;
 

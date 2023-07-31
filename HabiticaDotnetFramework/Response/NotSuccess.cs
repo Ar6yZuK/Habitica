@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+#pragma warning disable 1591
 
 namespace Ar6yZuK.Habitica.Response;
 public class NotSuccess

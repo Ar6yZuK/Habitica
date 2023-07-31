@@ -6,13 +6,15 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+#pragma warning disable 1591
+#nullable enable
 
 namespace Ar6yZuK.Habitica;
 
 public class HabiticaClient : IDisposable
 {
 	public const string BaseAddressString = "https://habitica.com/api/v3/";
-	public readonly Uri _baseAddress = new(BaseAddressString);
+	public readonly Uri BaseAddress = new(BaseAddressString);
 
 	public const string AuthorId = "e3e6945e-a32f-4d6f-a833-45f11a678d23";
 	public const string ApiName = "Ar6yZuK_hu";
@@ -25,7 +27,7 @@ public class HabiticaClient : IDisposable
 		if (credentials is null) throw new ArgumentNullException(nameof(credentials));
 
 		_httpClient = new HttpClient();
-		_httpClient.BaseAddress = _baseAddress;
+		_httpClient.BaseAddress = BaseAddress;
 		_httpClient.DefaultRequestHeaders.Add("x-api-key", credentials.ApiKey);
 		_httpClient.DefaultRequestHeaders.Add("x-api-user", credentials.UserId);
 
@@ -94,16 +96,26 @@ public class HabiticaClient : IDisposable
 	#endregion
 
 	#region Score
+	/// <exception cref="HttpRequestException"></exception>
+	/// <exception cref="NotSuccessException"></exception>
 	public Task<TaskScore.Root> ScoreUp(Guid taskIdOrAlias, CancellationToken cancellationToken = default)
 		=> ScoreUp(taskIdOrAlias.ToString(), cancellationToken);
+	/// <exception cref="HttpRequestException"></exception>
+	/// <exception cref="NotSuccessException"></exception>
+	/// <exception cref="ArgumentException"></exception>
 	public Task<TaskScore.Root> ScoreUp(string taskIdOrAlias, CancellationToken cancellationToken = default)
 		=> ScoreInternal(taskIdOrAlias, Score.up, cancellationToken);
-
+	/// <exception cref="HttpRequestException"></exception>
+	/// <exception cref="NotSuccessException"></exception>
+	/// <exception cref="ArgumentException"></exception>
 	public Task<TaskScore.Root> ScoreDown(string taskIdOrAlias, CancellationToken cancellationToken = default)
 		=> ScoreInternal(taskIdOrAlias, Score.down, cancellationToken);
 
 	private async Task<TaskScore.Root> ScoreInternal(string taskIdOrAlias, Score score, CancellationToken cancellationToken)
 	{
+		if (string.IsNullOrWhiteSpace(taskIdOrAlias)) 
+			throw new ArgumentException($"\"{nameof(taskIdOrAlias)}\" не может быть пустым или содержать только пробел.", nameof(taskIdOrAlias));
+
 		var requestAddition = $"{taskIdOrAlias}/score/{score}";
 		var response = await TasksRequestAsync<TaskScore.Root>(requestAddition, HttpMethod.Post, cancellationToken);
 

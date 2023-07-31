@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
+#pragma warning disable 1591
 
 namespace Ar6yZuK.Habitica.Response.User;
 public class BuyHealthPotion
