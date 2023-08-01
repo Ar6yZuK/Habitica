@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OneOf;
+using System;
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -32,7 +33,8 @@ public class GetAllTasks
 
 	public class TaskData
 	{
-		public Task<TaskScore.Root> ScoreUp(HabiticaClient client, CancellationToken cancellationToken = default)
+		/// <exception cref="System.Net.Http.HttpRequestException"></exception>
+		public Task<OneOf<TaskScore.Root?, NotSuccess.Root>> ScoreUp(HabiticaClient client, CancellationToken cancellationToken = default)
 			=> client.ScoreUp(Id, cancellationToken);
 
 		[JsonPropertyName("title")]

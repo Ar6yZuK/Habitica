@@ -1,6 +1,7 @@
 ﻿using Ar6yZuK.Habitica.Response;
 using Ar6yZuK.Habitica.Response.Tasks;
 using Ar6yZuK.Habitica.Response.User;
+using OneOf;
 using System;
 using System.Net.Http;
 using System.Text.Json;
@@ -35,83 +36,74 @@ public class HabiticaClient : IDisposable
 	}
 
 	#region Request
-	/// <exception cref="NotSuccessException"></exception>
 	/// <exception cref="HttpRequestException"></exception>
-	private Task<TData?> UserRequestAsync<TData>(string additionForResource, HttpMethod method, CancellationToken cancellationToken = default)
+	private Task<OneOf<TData?, NotSuccess.Root>> UserRequestAsync<TData>(string additionForResource, HttpMethod method, CancellationToken cancellationToken = default)
 		=> RequestAsync<TData>($"user/{additionForResource}", method, cancellationToken);
 
-	/// <exception cref="NotSuccessException"></exception>
 	/// <exception cref="HttpRequestException"></exception>
-	private Task<TData?> TasksRequestAsync<TData>(string additionForResource, HttpMethod method, CancellationToken cancellationToken = default)
+	private Task<OneOf<TData?, NotSuccess.Root>> TasksRequestAsync<TData>(string additionForResource, HttpMethod method, CancellationToken cancellationToken = default)
 		=> RequestAsync<TData>($"tasks/{additionForResource}", method, cancellationToken);
 
-	/// <summary>
-	/// return null if TData not deserialized
-	/// </summary>
-	/// <exception cref="NotSuccessException"></exception>
 	/// <exception cref="HttpRequestException"></exception>
-	private async Task<TData?> RequestAsync<TData>(string additionForResource, HttpMethod method, CancellationToken cancellationToken)
+	private async Task<OneOf<TData?, NotSuccess.Root>> RequestAsync<TData>(string additionForResource, HttpMethod method, CancellationToken cancellationToken)
 	{
 		var request = new HttpRequestMessage(method, additionForResource);
 		var responseMessage = await _httpClient.SendAsync(request, cancellationToken: cancellationToken);
 
-		TData? data = await EnsureSuccess<TData>(responseMessage);
+		var data = await EnsureSuccess<TData>(responseMessage);
 		return data;
 	}
 	#endregion
 
 	#region EnsureSuccess
-	private static async Task<TData?> EnsureSuccess<TData>(HttpResponseMessage responseMessage)
+	private static async Task<OneOf<TData?, NotSuccess.Root>> EnsureSuccess<TData>(HttpResponseMessage responseMessage)
 	{
-		responseMessage.EnsureSuccessStatusCode();
 		string json = await responseMessage.Content.ReadAsStringAsync();
-		var successJson = JsonSerializer.Deserialize<NotSuccess.Root>(json); // may TData : ISuccess. Deserialize TData and check success. For not deserialize twice
-																			 // if successJson is null maybe habitica error.
-		if (!successJson.Success)
-			throw new NotSuccessException(successJson);
+		var notSuccessJson = JsonSerializer.Deserialize<NotSuccess.Root>(json);
+
+		if(notSuccessJson is null)
+			responseMessage.EnsureSuccessStatusCode();
+
+		if (!notSuccessJson.Success)
+			return notSuccessJson;
 
 		return JsonSerializer.Deserialize<TData>(json);
 	}
 	#endregion
 
 	#region BuyHealthPotion
-	/// <exception cref="NotSuccessException"></exception>
 	/// <exception cref="HttpRequestException"></exception>
-	public async Task<BuyHealthPotion.Root> BuyHealthPotion(CancellationToken cancellationToken = default)
+	public async Task<OneOf<BuyHealthPotion.Root?, NotSuccess.Root>> BuyHealthPotion(CancellationToken cancellationToken = default)
 	{
 		var result = await UserRequestAsync<BuyHealthPotion.Root>("buy-health-potion", HttpMethod.Post, cancellationToken);
-		return result!;
+		return result;
 	}
 	#endregion
 
 	#region GetAllTasks
-	/// <exception cref="NotSuccessException"></exception>
 	/// <exception cref="HttpRequestException"></exception>
-	public async Task<GetAllTasks.Root> GetAllTasksAsync(CancellationToken cancellationToken = default)
+	public async Task<OneOf<GetAllTasks.Root?, NotSuccess.Root>> GetAllTasksAsync(CancellationToken cancellationToken = default)
 	{
 		var response = await TasksRequestAsync<GetAllTasks.Root>("user", HttpMethod.Get, cancellationToken);
 
-		return response!;
+		return response;
 	}
 	#endregion
 
 	#region Score
 	/// <exception cref="HttpRequestException"></exception>
-	/// <exception cref="NotSuccessException"></exception>
-	public Task<TaskScore.Root> ScoreUp(Guid taskIdOrAlias, CancellationToken cancellationToken = default)
+	public Task<OneOf<TaskScore.Root?, NotSuccess.Root>> ScoreUp(Guid taskIdOrAlias, CancellationToken cancellationToken = default)
 		=> ScoreUp(taskIdOrAlias.ToString(), cancellationToken);
 	/// <exception cref="HttpRequestException"></exception>
-	/// <exception cref="NotSuccessException"></exception>
 	/// <exception cref="ArgumentException"></exception>
-	public Task<TaskScore.Root> ScoreUp(string taskIdOrAlias, CancellationToken cancellationToken = default)
+	public Task<OneOf<TaskScore.Root?, NotSuccess.Root>> ScoreUp(string taskIdOrAlias, CancellationToken cancellationToken = default)
 		=> ScoreInternal(taskIdOrAlias, Score.up, cancellationToken);
 	/// <exception cref="HttpRequestException"></exception>
-	/// <exception cref="NotSuccessException"></exception>
 	/// <exception cref="ArgumentException"></exception>
-	public Task<TaskScore.Root> ScoreDown(string taskIdOrAlias, CancellationToken cancellationToken = default)
+	public Task<OneOf<TaskScore.Root?, NotSuccess.Root>> ScoreDown(string taskIdOrAlias, CancellationToken cancellationToken = default)
 		=> ScoreInternal(taskIdOrAlias, Score.down, cancellationToken);
 
-	private async Task<TaskScore.Root> ScoreInternal(string taskIdOrAlias, Score score, CancellationToken cancellationToken)
+	private async Task<OneOf<TaskScore.Root?, NotSuccess.Root>> ScoreInternal(string taskIdOrAlias, Score score, CancellationToken cancellationToken)
 	{
 		if (string.IsNullOrWhiteSpace(taskIdOrAlias)) 
 			throw new ArgumentException($"\"{nameof(taskIdOrAlias)}\" не может быть пустым или содержать только пробел.", nameof(taskIdOrAlias));
@@ -119,7 +111,7 @@ public class HabiticaClient : IDisposable
 		var requestAddition = $"{taskIdOrAlias}/score/{score}";
 		var response = await TasksRequestAsync<TaskScore.Root>(requestAddition, HttpMethod.Post, cancellationToken);
 
-		return response!;
+		return response;
 	}
 
 	private enum Score
