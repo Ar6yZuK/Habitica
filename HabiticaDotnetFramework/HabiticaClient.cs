@@ -72,6 +72,9 @@ public class HabiticaClient : IDisposable
 	#endregion
 
 	#region BuyHealthPotion
+	/// <summary>
+	/// Use <see cref="BuyHealthPotion(CancellationToken)"/> once per 30 seconds
+	/// </summary>
 	/// <exception cref="HttpRequestException"></exception>
 	public async Task<OneOf<BuyHealthPotion.Root?, NotSuccess.Root>> BuyHealthPotion(CancellationToken cancellationToken = default)
 	{
@@ -81,6 +84,9 @@ public class HabiticaClient : IDisposable
 	#endregion
 
 	#region GetAllTasks
+	/// <summary>
+	/// Use <see cref="GetAllTasksAsync(CancellationToken)"/> once per few seconds
+	/// </summary>
 	/// <exception cref="HttpRequestException"></exception>
 	public async Task<OneOf<GetAllTasks.Root?, NotSuccess.Root>> GetAllTasksAsync(CancellationToken cancellationToken = default)
 	{
@@ -91,13 +97,24 @@ public class HabiticaClient : IDisposable
 	#endregion
 
 	#region Score
+	/// <summary>
+	/// Use <see cref="ScoreUp(Guid, CancellationToken)"/> once per 30 seconds
+	/// </summary>
 	/// <exception cref="HttpRequestException"></exception>
 	public Task<OneOf<TaskScore.Root?, NotSuccess.Root>> ScoreUp(Guid taskIdOrAlias, CancellationToken cancellationToken = default)
 		=> ScoreUp(taskIdOrAlias.ToString(), cancellationToken);
+
+	/// <summary>
+	/// Use <see cref="ScoreUp(string, CancellationToken)"/> once per 30 seconds
+	/// </summary>
 	/// <exception cref="HttpRequestException"></exception>
 	/// <exception cref="ArgumentException"></exception>
 	public Task<OneOf<TaskScore.Root?, NotSuccess.Root>> ScoreUp(string taskIdOrAlias, CancellationToken cancellationToken = default)
 		=> ScoreInternal(taskIdOrAlias, Score.up, cancellationToken);
+
+	/// <summary>
+	/// Use <see cref="ScoreDown(string, CancellationToken)"/> once per 30 seconds
+	/// </summary>
 	/// <exception cref="HttpRequestException"></exception>
 	/// <exception cref="ArgumentException"></exception>
 	public Task<OneOf<TaskScore.Root?, NotSuccess.Root>> ScoreDown(string taskIdOrAlias, CancellationToken cancellationToken = default)

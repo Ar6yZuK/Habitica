@@ -33,6 +33,9 @@ public class GetAllTasks
 
 	public class TaskData
 	{
+		/// <summary>
+		/// Use <see cref="ScoreUp(HabiticaClient, CancellationToken)"/> once per 30 seconds
+		/// </summary>
 		/// <exception cref="System.Net.Http.HttpRequestException"></exception>
 		public Task<OneOf<TaskScore.Root?, NotSuccess.Root>> ScoreUp(HabiticaClient client, CancellationToken cancellationToken = default)
 			=> client.ScoreUp(Id, cancellationToken);
