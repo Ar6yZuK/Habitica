@@ -170,8 +170,8 @@ public class GetAllTasks
 
 			public override void Write(Utf8JsonWriter writer, DateTimeOffset value, JsonSerializerOptions options)
 			{
-				writer.WriteStringValue(value);
-			}
+                writer.WriteNumberValue(value.ToUnixTimeMilliseconds());
+            }
 		}
 
 		[JsonConverter(typeof(DateTimeOffsetUnixMillisecondConverter))]
